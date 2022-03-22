@@ -20,14 +20,14 @@ procedure procesarArchivo (var archNum: archivoNumeros; var cantNumMenores: inte
 var
   num: integer;
 begin
-  sumaNum := 0;
-  cantNumMenores := 0;
   reset (archNum);
   cantNum := fileSize (archNum);
+  sumaNum := 0;
+  cantNumMenores := 0;
   while (not eof (archNum)) do
     begin
       read (archNum, num);
-      writeln (num); //imprimo el numero en pantalla
+      writeln (num);
       if (esMenor (num)) then
         cantNumMenores := cantNumMenores +1;
       sumaNum := sumaNum + num;
@@ -42,10 +42,14 @@ var
   sumaNum: integer;
   cantNum: integer;
 BEGIN
+  {El nombre de archivo ingresado de teclado puede ser erroneo pero vamos a suponer que es válido
+    ya que la catedra asi lo dijo, mas especificamente Emmanuel}
   write ('Ingrese el nombre del archivo a procesar: ');
   readln (nomArch);
   assign (archNum, nomArch);
+  {En el metodo procesar archivo voy a usar la operacion read y close para ser elegante}
   procesarArchivo (archNum, cantNumMenores, sumaNum, cantNum);
+  {Imprimo en pantalla los resultados del procesamiento de los datos del archivo}
   writeln ('CANTIDAD DE NUMEROS MENORES A 1500: ', cantNumMenores);
   writeln ('PROMEDIO NUMEROS INGRESADOS ES: ',sumaNum/cantNum:3:2 );
 END.

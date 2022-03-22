@@ -1,0 +1,9 @@
+76643 39827 MOTOROLA
+67 2 Posee una camara frontal buena
+A16U
+28329 99827 SAMSUNG
+6 5 Posee una bateria de 4000mh
+YY6
+88783 69827 NOKIA
+10 3 Color negro mate
+UUH

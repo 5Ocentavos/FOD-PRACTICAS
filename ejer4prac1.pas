@@ -24,27 +24,8 @@ type
 
   archivoEmpleados = file of empleado;
 
-procedure leerEmpleado (var emp: empleado);
-begin
-  with emp do
-    begin
-      write ('Ingrese el apellido: ');
-      readln (apellido);
-      if (apellido <> 'fin') then
-        begin
-          write ('Ingrese el nombre: ');
-          readln (nombre);
-          write ('Ingrese el numero de empleado: ');
-          readln (numEmp);
-          write ('Ingrese la edad: ');
-          readln (edad);
-          write ('Ingrese el dni: ');
-          readln (dni);
-        end;
-    end;
-end;
-  
-procedure elegirArchivo (var archEmp: archivoEmpleados);
+
+procedure lecturaYEnlaceDelArchivo (var archEmp: archivoEmpleados);
 var
   nomArch: string;
 begin
@@ -58,7 +39,6 @@ procedure exportarArchTextNoDni (var archEmp: archivoEmpleados; var archText2: t
 var
   emp: empleado; 
 begin
-  elegirArchivo (archEmp);
   reset (archEmp);
   assign (archText2, 'faltaDNIEmpleado.txt');
   rewrite (archText2);
@@ -77,9 +57,8 @@ procedure exportarArchText (var archEmp: archivoEmpleados; var archText : text);
 var
   emp: empleado; 
 begin
-  elegirArchivo (archEmp);
   reset (archEmp);
-  {Leo el nombre de mi archText}
+  {Le asigno a archText la ruta donde se van a guardar los datos que lea de archEmp}
   assign (archText, 'todosEmpleados.txt');
   rewrite (archText);
   while (not eof(archEmp)) do
@@ -110,7 +89,9 @@ begin
   leerNumEmpleado := num;
 end;
 
-procedure modificarEdades (var archEmp: archivoEmpleados);
+procedure modificarEdades (var archEmp: archivoEmpleados); 
+//Con tener un metodo que modifique una sola edad ya estaba bien, 
+//no borro este metodo porque me costo un ovario y una neurona sacarlo
 var
   emp: empleado;
   existeEmp : boolean;
@@ -119,7 +100,7 @@ var
 begin
   encontre := false;
   existeEmp := true;
-  elegirArchivo (archEmp);
+
   reset (archEmp);
   while existeEmp do 
     begin
@@ -135,7 +116,7 @@ begin
               seek (archEmp, (filePos(archEmp) - 1));
               write (archEmp, emp);
               {reestablesco la posicion del puntero al inicio del archivo}
-              seek (archEmp, (filePos(archEmp)- filePos(archEmp)));
+              seek (archEmp, 0);
             end;
         end;
       if (not encontre)then
@@ -145,13 +126,33 @@ begin
 end;
 
 
+procedure leerEmpleado (var emp: empleado);
+begin
+  with emp do
+    begin
+      write ('Ingrese el apellido: ');
+      readln (apellido);
+      if (apellido <> 'fin') then
+        begin
+          write ('Ingrese el nombre: ');
+          readln (nombre);
+          write ('Ingrese el numero de empleado: ');
+          readln (numEmp);
+          write ('Ingrese la edad: ');
+          readln (edad);
+          write ('Ingrese el dni: ');
+          readln (dni);
+        end;
+    end;
+end;
+  
+
 procedure agregarEmpleados (var archEmp: archivoEmpleados);
 var
   emp: empleado;
 begin
-  elegirArchivo (archEmp);
   reset (archEmp);
-  seek (archEmp, fileSize (archEmp));
+  seek (archEmp, fileSize (archEmp)); //hay una opcion que te posiciona al final del archivo, no recuerdo como me dijo que se llamaba el ruso
   leerEmpleado (emp);
   while (emp.apellido <> 'fin') do
     begin
@@ -180,7 +181,6 @@ procedure listarEmpleadosMayores70 (var archEmp: archivoEmpleados);
 var
   emp: empleado;
 begin
-  elegirArchivo (archEmp);
   reset (archEmp);
   while (not eof (archEmp)) do
     begin
@@ -214,7 +214,6 @@ procedure listarEmpleados (var archEmp: archivoEmpleados);
 var
   emp: empleado;
 begin
-  elegirArchivo (archEmp);
   reset (archEmp);
   while (not eof (archEmp)) do
     begin
@@ -229,11 +228,8 @@ end;
 procedure creacionYcarga (var archEmp: archivoEmpleados);
 var
   emp: empleado;
-  nomArch : string;
 begin
-  write ('Ingrese el nombre del archivo: ');
-  readln (nomArch);
-  assign (archEmp, nomArch);
+  {Creo el archivo}
   rewrite (archEmp);
   {Leo y agrego empleados a mi archivo}
   leerEmpleado (emp);
@@ -242,6 +238,7 @@ begin
       write (archEmp, emp);
       leerEmpleado (emp);
     end;
+  {Transfiero la informacion leida a la ruta que esta enlazada con archEmp}
   close (archEmp);
 end;
 
@@ -272,6 +269,7 @@ var
   archText2: text;
 BEGIN
   opc := mostrarMenu;
+  lecturaYEnlaceDelArchivo (archEmp);
   case opc of
     1: creacionYcarga (archEmp);
     2: listarEmpleados (archEmp);

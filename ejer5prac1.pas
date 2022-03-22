@@ -37,39 +37,88 @@ type
   
   archivoCelulares = file of celular;
   
-procedure importarArchAText (var archCel: archivoCelulares; var archText2: text);
+procedure exportarArchBin (var archCel: archivoCelulares; var archText: text);
+var
+  cel: celular;
 begin
-
+  reset (archCel); 
+  assign (archText, 'todosCelularesExpor');
+  rewrite (archText);
+  while (not eof(archCel)) do
+    begin
+      read (archCel, cel);
+      with cel do
+        writeln(archText,' ',codCel,' ',precio,' ', marca,' ',stockDisp,' ',stockMin, ' ', desc,' ', nombre);
+    end;
+  close (archCel);
+  close (archText);
 end;  
+
+  
+procedure mostrarInfo (cel: celular);
+begin
+  with cel do
+    begin
+      writeln ('CODIGO : ', codCel);
+      writeln ('PRECIO: ',precio:3:0,'$');
+      writeln ('MARCA:',marca);
+      writeln ('STOCK DISPONIBLE: ',stockDisp);
+      writeln ('STOCK MINIMO: ',stockMin);
+      writeln ('DESCRIPCION: ',desc);
+      writeln ('NOMBRE: ', nombre);
+    end;
+end;
+  
   
 procedure imprimirCelDesc (var archCel:archivoCelulares);
+var
+  cel: celular;
+  descripcion: string;
 begin
-
+  write ('Ingrese una descripcion: ');
+  readln (descripcion);
+  reset (archCel);
+  while (not eof (archCel)) do
+    begin
+      read (archCel, cel);
+      if (cel.desc = descripcion) then
+        mostrarInfo (cel);
+    end;
+  close (archCel); 
 end;
 
-procedure imprimirStockMin (var archCel: archivoCelulares);
-begin
 
+procedure imprimirStockMin (var archCel: archivoCelulares);
+var
+  cel: celular;
+begin
+  reset (archCel);
+  while (not eof (archCel)) do
+    begin
+      read (archCel, cel);
+      if (cel.stockDisp < cel.stockMin) then
+        mostrarInfo (cel);
+    end;
+  close (archCel); //no es necesario invocar a esta funcion ya que solo leimos los datos del archivo, no modificamos nada. 
 end;
 
 procedure crearYcargar (var archCel: archivoCelulares; var archText1: text);
 var
-  nomArch : string;
   cel: celular;
 begin
-  {Leo el nombre fisico para mi archivo binario y luego lo creo}
-  write ('Ingrese el nombre del archivo: ');
-  readln (nomArch);
-  assign (archCel, nomArch);
   rewrite (archCel);
   {Le asigno a mi archivo de texto su correspondiente ruta fisica}
-  assign (archText1, 'celulares.txt');
+  assign (archText1, 'todosCelulares.txt');
   reset (archText1);
   {Hago la copia/trasferencia de datos de mi archivo txt a un archivo binario}
   while (not eof (archText1)) do
     begin
       with cel do
-        readln (archText1, codCel, precio, marca, stockDisp, stockMin, desc, nombre); //que hace esto señora??
+        begin
+          readln (archText1, codCel, precio, marca);
+          readln (archText1, stockDisp, stockMin, desc);
+          readln (archText1, nombre); //que hace esto señora??
+        end;
       write (archCel, cel);
     end;
   {Cierro los respectivos archivos}
@@ -98,13 +147,19 @@ var
   archText1: text;
   archText2: text;
   opc: integer;
+  nomArch: string;
 BEGIN
+  {Leo el nombre fisico para mi archivo binario}
+  write ('Ingrese el nombre del archivo: ');
+  readln (nomArch);
+  assign (archCel, nomArch);
+  {Llamo a un metodo que muestra el menu con opciones y el leo una}
   opc := mostrarMenu;
   case opc of
     1: crearYcargar (archCel, archText1);
     2: imprimirStockMin (archCel);
     3: imprimirCelDesc (archCel);
-    4: importarArchAText (archCel, archText2);
+    4: exportarArchBin (archCel, archText2);
   end;
 END.
 

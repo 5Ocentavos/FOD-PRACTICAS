@@ -27,7 +27,8 @@ type
 
   archivoEmpleados = file of empleado;
   
-procedure elegirArchivo (var archEmp: archivoEmpleados);
+  
+procedure leerNombreDelArchivoYEnlazarlo (var archEmp: archivoEmpleados);
 var
   nomArch: string;
 begin
@@ -53,7 +54,6 @@ procedure listarEmpleadosMayores70 (var archEmp: archivoEmpleados);
 var
   emp: empleado;
 begin
-  elegirArchivo (archEmp);
   reset (archEmp);
   while (not eof (archEmp)) do
     begin
@@ -69,7 +69,6 @@ var
   emp: empleado;
   nomOape: string;
 begin
-  elegirArchivo (archEmp);
   reset (archEmp);
   write ('Ingrese un nombre o apellido: ');
   readln (nomOape);
@@ -87,7 +86,6 @@ procedure listarEmpleados (var archEmp: archivoEmpleados);
 var
   emp: empleado;
 begin
-  elegirArchivo (archEmp);
   reset (archEmp);
   while (not eof (archEmp)) do
     begin
@@ -120,11 +118,7 @@ end;
 procedure creacionYcarga (var archEmp: archivoEmpleados);
 var
   emp: empleado;
-  nomArch : string;
 begin
-  write ('Ingrese el nombre del archivo: ');
-  readln (nomArch);
-  assign (archEmp, nomArch);
   rewrite (archEmp);
   {Leo y agrego empleados a mi archivo}
   leerEmpleado (emp);
@@ -157,6 +151,7 @@ var
   opc: integer;
 BEGIN
   opc := mostrarMenu;
+  leerNombreDelArchivoYEnlazarlo (archEmp); 
   case opc of
     1: creacionYcarga (archEmp);
     2: listarEmpleados (archEmp);

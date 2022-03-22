@@ -15,7 +15,7 @@ procedure crearYcargarArchivo (var archNum: archivoNumeros);
 var
   num: integer;
 begin
-  {Creo el archivo, no s1é porque va este paso pero bueno...}
+  {Creo el archivo efectivo}
   rewrite (archNum);
   {Leo numeros y los cargo en el archivo}
   write ('Ingrese un numero entero: ');
@@ -26,6 +26,7 @@ begin
       write ('Ingrese un numero entero: ');
       readln (num);
     end;
+  {Además de cerrar el archivo, el método close, me trasfiere la información de memoria principal a memoria secuandaria o disco}
   close (archNum);
 end;
 
@@ -37,9 +38,9 @@ BEGIN
   {Leo el nombre del archivo}
   write ('Ingrese el nombre del archivo: ');
   readln (nomArch);
-  {Hago el enlace de mi archivo binario con el nombre que ingreso el usuario}
+  {Hago el enlace de mi archivo binario con la ruta que ingreso el usuario}
   assign (archNum, nomArch);
-  {Llamo al metodo crear y cargar}
+  {Llamo al método crear y cargar}
   crearYcargarArchivo (archNum);
   write ('SE HA CREADO UN ARCHIVO DE NUMEROS');
 END.
